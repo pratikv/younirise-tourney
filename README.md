@@ -42,6 +42,22 @@ npm run dev
 npm run build
 ```
 
+### GitHub Pages Deployment
+
+The app is configured for GitHub Pages deployment. The base path is set to `/younirise-tourney/` by default.
+
+**If your repository name is different:**
+1. Create a `.env` file in the root directory
+2. Set `VITE_BASE_PATH=/your-repo-name/`
+3. Rebuild: `npm run build`
+
+**To deploy:**
+```bash
+npm run deploy
+```
+
+This will build the app and deploy it to the `gh-pages` branch.
+
 ## Usage
 
 1. **Add Players**: Go to the Players tab and add players to Group A or Group B
