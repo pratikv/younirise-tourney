@@ -127,7 +127,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🏆 Tournament Management System</h1>
+        <h1>🏆 Younirise Tourney 2025-26</h1>
         <p>Best of 15 Games • Tie Break at 7-7 • Top 4 to Super 8</p>
       </header>
 
