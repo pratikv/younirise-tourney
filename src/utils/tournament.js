@@ -146,7 +146,8 @@ export class Tournament {
         losses: 0,
         gamesWon: 0,
         gamesLost: 0,
-        matchesPlayed: 0
+        matchesPlayed: 0,
+        headToHead: {} // Track head-to-head wins against each opponent
       };
     });
 
@@ -157,9 +158,15 @@ export class Tournament {
       if (match.winnerId === match.player1Id) {
         p1Stats.wins++;
         p2Stats.losses++;
+        // Track head-to-head
+        p1Stats.headToHead[match.player2Id] = (p1Stats.headToHead[match.player2Id] || 0) + 1;
+        p2Stats.headToHead[match.player1Id] = (p2Stats.headToHead[match.player1Id] || 0);
       } else {
         p2Stats.wins++;
         p1Stats.losses++;
+        // Track head-to-head
+        p2Stats.headToHead[match.player1Id] = (p2Stats.headToHead[match.player1Id] || 0) + 1;
+        p1Stats.headToHead[match.player2Id] = (p1Stats.headToHead[match.player2Id] || 0);
       }
 
       p1Stats.gamesWon += match.player1Score;
@@ -170,11 +177,40 @@ export class Tournament {
       p2Stats.matchesPlayed++;
     });
 
-    // Sort by: wins (desc), then games won (desc), then games lost (asc)
+    // Helper function to get head-to-head record between two players
+    const getHeadToHead = (playerAId, playerBId) => {
+      const aStats = stats[playerAId];
+      const bStats = stats[playerBId];
+      const aWins = aStats.headToHead[playerBId] || 0;
+      const bWins = bStats.headToHead[playerAId] || 0;
+      return { aWins, bWins };
+    };
+
+    // Sort by:
+    // 1. Wins (desc) - most wins first
+    // 2. Losses (asc) - if same wins, fewer losses is better
+    // 3. Games won (desc) - if same wins AND losses, more games won is better
+    // 4. Games lost (asc) - if same wins, losses, and games won, fewer games lost is better
+    // 5. Head-to-head record - if still tied, head-to-head result
     const standings = Object.values(stats).sort((a, b) => {
+      // 1. Most wins
       if (b.wins !== a.wins) return b.wins - a.wins;
+      
+      // 2. Fewer losses (if same wins)
+      if (a.losses !== b.losses) return a.losses - b.losses;
+      
+      // 3. More games won (if same wins AND same losses)
       if (b.gamesWon !== a.gamesWon) return b.gamesWon - a.gamesWon;
-      return a.gamesLost - b.gamesLost;
+      
+      // 4. Fewer games lost (if same wins, losses, and games won)
+      if (a.gamesLost !== b.gamesLost) return a.gamesLost - b.gamesLost;
+      
+      // 5. Head-to-head record (if still tied)
+      const h2h = getHeadToHead(a.player.id, b.player.id);
+      if (h2h.aWins !== h2h.bWins) return h2h.bWins - h2h.aWins;
+      
+      // If still tied, maintain current order
+      return 0;
     });
 
     return standings;
@@ -237,11 +273,27 @@ export class Tournament {
     // Combine and rank all players
     const allStandings = [...groupAStandings, ...groupBStandings];
     
-    // Sort by: wins (desc), then games won (desc), then games lost (asc)
+    // Sort by the same criteria as group standings:
+    // 1. Wins (desc)
+    // 2. Losses (asc) - fewer losses is better
+    // 3. Games won (desc) - if same wins AND losses, more games won is better
+    // 4. Games lost (asc) - if same wins, losses, and games won, fewer games lost is better
+    // Note: Head-to-head only applies within groups, so we skip it for overall rankings
     allStandings.sort((a, b) => {
+      // 1. Most wins
       if (b.wins !== a.wins) return b.wins - a.wins;
+      
+      // 2. Fewer losses (if same wins)
+      if (a.losses !== b.losses) return a.losses - b.losses;
+      
+      // 3. More games won (if same wins AND same losses)
       if (b.gamesWon !== a.gamesWon) return b.gamesWon - a.gamesWon;
-      return a.gamesLost - b.gamesLost;
+      
+      // 4. Fewer games lost (if same wins, losses, and games won)
+      if (a.gamesLost !== b.gamesLost) return a.gamesLost - b.gamesLost;
+      
+      // If still tied, maintain current order
+      return 0;
     });
 
     return allStandings.map((s, index) => ({
