@@ -105,7 +105,7 @@
 }
 
 .record-btn {
-  padding: 10px 20px;
+  padding: 12px 20px;
   background: #667eea;
   color: white;
   border: none;
@@ -115,6 +115,8 @@
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
   width: 100%;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .record-btn:hover {
@@ -239,6 +241,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .modal-actions button[type="submit"] {
@@ -279,20 +283,129 @@
 }
 
 @media (max-width: 768px) {
+  .group-matches {
+    padding: 15px;
+  }
+
+  .group-matches h2 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
   .matches-list {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .score-inputs {
-    flex-direction: column;
+  .match-card {
+    padding: 15px;
   }
 
-  .score-inputs .vs {
-    transform: rotate(90deg);
+  .match-players {
+    margin-bottom: 12px;
+    font-size: 0.95em;
+  }
+
+  .match-score {
+    font-size: 1.1em;
+  }
+
+  .match-score .score {
+    font-size: 1.3em;
+  }
+
+  .record-btn {
+    padding: 12px;
+    font-size: 0.95em;
+  }
+
+  .pending-match-label {
+    padding: 8px 15px;
+    font-size: 0.85em;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
   }
 
   .modal-content {
     padding: 20px;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 10px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+  }
+
+  .match-info {
+    padding: 12px;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+  }
+
+  .score-inputs {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .score-inputs .vs {
+    transform: rotate(90deg);
+    margin: -5px 0;
+  }
+
+  .score-input-group {
+    min-width: 100%;
+  }
+
+  .score-input-group input {
+    padding: 12px;
+    font-size: 1.2em;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .help-text {
+    font-size: 0.85em;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .group-matches {
+    padding: 10px;
+  }
+
+  .match-card {
+    padding: 12px;
+  }
+
+  .match-players {
+    font-size: 0.9em;
+    gap: 8px;
+  }
+
+  .match-score {
+    font-size: 1em;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.1em;
   }
 }
 

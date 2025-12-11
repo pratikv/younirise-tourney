@@ -146,12 +146,67 @@
 }
 
 @media (max-width: 768px) {
+  .data-management {
+    gap: 20px;
+  }
+
+  .data-management h2 {
+    font-size: 1.3em;
+  }
+
+  .description {
+    font-size: 0.95em;
+  }
+
   .data-actions {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .action-group {
     padding: 20px;
+  }
+
+  .action-group h3 {
+    font-size: 1.1em;
+  }
+
+  .action-description {
+    font-size: 0.9em;
+  }
+
+  .export-btn,
+  .import-btn {
+    padding: 14px 24px;
+    font-size: 1em;
+  }
+
+  .info-section {
+    padding: 15px;
+  }
+
+  .info-section h3 {
+    font-size: 1.1em;
+  }
+
+  .info-section ul {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .data-management h2 {
+    font-size: 1.2em;
+  }
+
+  .action-group {
+    padding: 15px;
+  }
+
+  .export-btn,
+  .import-btn {
+    padding: 12px 20px;
+    font-size: 0.95em;
   }
 }
 

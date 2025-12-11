@@ -63,6 +63,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .add-player-form button:hover {
@@ -150,18 +152,67 @@
 }
 
 @media (max-width: 768px) {
+  .player-management {
+    gap: 20px;
+  }
+
+  .add-player-section {
+    padding: 15px;
+  }
+
+  .add-player-section h2 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+  }
+
   .add-player-form {
     flex-direction: column;
+    gap: 12px;
   }
 
   .add-player-form input,
   .add-player-form select,
   .add-player-form button {
     width: 100%;
+    padding: 14px;
+    font-size: 1em;
+  }
+
+  .group-section {
+    padding: 15px;
+  }
+
+  .group-section h2 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
   }
 
   .players-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .player-card {
+    padding: 12px;
+  }
+
+  .remove-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-player-section,
+  .group-section {
+    padding: 12px;
+  }
+
+  .add-player-form input,
+  .add-player-form select,
+  .add-player-form button {
+    padding: 12px;
   }
 }
 
