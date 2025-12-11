@@ -17,32 +17,40 @@ function Standings({ tournament }) {
               <tr>
                 <th>Rank</th>
                 <th>Player</th>
+                <th>Total Matches</th>
                 <th>Wins</th>
                 <th>Losses</th>
                 <th>Games Won</th>
                 <th>Games Lost</th>
+                <th>Total Points</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {groupAStandings.map((standing, index) => (
-                <tr 
-                  key={standing.player.id}
-                  className={top4A.includes(standing.player) ? 'qualified' : ''}
-                >
-                  <td>{index + 1}</td>
-                  <td>{standing.player.name}</td>
-                  <td>{standing.wins}</td>
-                  <td>{standing.losses}</td>
-                  <td>{standing.gamesWon}</td>
-                  <td>{standing.gamesLost}</td>
-                  <td>
-                    {top4A.includes(standing.player) && (
-                      <span className="qualified-badge">Qualified</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {groupAStandings.map((standing, index) => {
+                const totalMatches = standing.wins + standing.losses;
+                const totalPoints = standing.wins * 2;
+                return (
+                  <tr 
+                    key={standing.player.id}
+                    className={top4A.includes(standing.player) ? 'qualified' : ''}
+                  >
+                    <td>{index + 1}</td>
+                    <td>{standing.player.name}</td>
+                    <td>{totalMatches}</td>
+                    <td>{standing.wins}</td>
+                    <td>{standing.losses}</td>
+                    <td>{standing.gamesWon}</td>
+                    <td>{standing.gamesLost}</td>
+                    <td>{totalPoints}</td>
+                    <td>
+                      {top4A.includes(standing.player) && (
+                        <span className="qualified-badge">Qualified</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           {groupAStandings.length === 0 && (
@@ -59,32 +67,40 @@ function Standings({ tournament }) {
               <tr>
                 <th>Rank</th>
                 <th>Player</th>
+                <th>Total Matches</th>
                 <th>Wins</th>
                 <th>Losses</th>
                 <th>Games Won</th>
                 <th>Games Lost</th>
+                <th>Total Points</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {groupBStandings.map((standing, index) => (
-                <tr 
-                  key={standing.player.id}
-                  className={top4B.includes(standing.player) ? 'qualified' : ''}
-                >
-                  <td>{index + 1}</td>
-                  <td>{standing.player.name}</td>
-                  <td>{standing.wins}</td>
-                  <td>{standing.losses}</td>
-                  <td>{standing.gamesWon}</td>
-                  <td>{standing.gamesLost}</td>
-                  <td>
-                    {top4B.includes(standing.player) && (
-                      <span className="qualified-badge">Qualified</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {groupBStandings.map((standing, index) => {
+                const totalMatches = standing.wins + standing.losses;
+                const totalPoints = standing.wins * 2;
+                return (
+                  <tr 
+                    key={standing.player.id}
+                    className={top4B.includes(standing.player) ? 'qualified' : ''}
+                  >
+                    <td>{index + 1}</td>
+                    <td>{standing.player.name}</td>
+                    <td>{totalMatches}</td>
+                    <td>{standing.wins}</td>
+                    <td>{standing.losses}</td>
+                    <td>{standing.gamesWon}</td>
+                    <td>{standing.gamesLost}</td>
+                    <td>{totalPoints}</td>
+                    <td>
+                      {top4B.includes(standing.player) && (
+                        <span className="qualified-badge">Qualified</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           {groupBStandings.length === 0 && (
