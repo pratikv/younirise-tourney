@@ -22,41 +22,205 @@ A comprehensive tennis tournament management application for organizing and trac
   - 9-7, 10-8, etc. (if match continues)
   - Maximum 15 games
 
+## Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- **Node.js** (version 16 or higher recommended)
+- **npm** (comes with Node.js) or **yarn**
+- **Git**
+
+### Installing Node.js
+
+If you don't have Node.js installed:
+
+1. **Visit the official Node.js website**: [https://nodejs.org/](https://nodejs.org/)
+2. **Download the LTS (Long Term Support) version** for your operating system
+3. **Run the installer** and follow the installation wizard
+4. **Verify installation** by opening a terminal and running:
+   ```bash
+   node --version
+   npm --version
+   ```
+
+   You should see version numbers for both commands.
+
+### Installing Git
+
+If you don't have Git installed:
+
+- **macOS**: Git may already be installed. If not, install via Homebrew: `brew install git` or download from [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+- **Windows**: Download from [https://git-scm.com/download/win](https://git-scm.com/download/win)
+- **Linux**: Use your package manager, e.g., `sudo apt-get install git` (Ubuntu/Debian)
+
+Verify installation:
+```bash
+git --version
+```
+
 ## Getting Started
 
-### Installation
+### 1. Clone the Repository
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/your-username/younirise-tourney.git
+```
+
+Replace `your-username` with the actual GitHub username or organization name.
+
+Navigate to the project directory:
+
+```bash
+cd younirise-tourney
+```
+
+### 2. Install Dependencies
+
+Install all required npm packages:
 
 ```bash
 npm install
 ```
 
-### Development
+This will install all dependencies listed in `package.json`, including React, Vite, and other required packages.
+
+### 3. Run the Application Locally
+
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-### Build
+The application will start and you should see output similar to:
+
+```
+  VITE v5.x.x  ready in xxx ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.x.x:5173/
+```
+
+Open your browser and navigate to `http://localhost:5173/` (or the URL shown in your terminal) to view the application.
+
+The development server supports hot module replacement (HMR), so any changes you make to the code will automatically refresh in the browser.
+
+### 4. Build for Production
+
+To create a production build of the application:
 
 ```bash
 npm run build
 ```
 
-### GitHub Pages Deployment
+This will create an optimized production build in the `dist` directory.
 
-The app is configured for GitHub Pages deployment. The base path is set to `/younirise-tourney/` by default.
+To preview the production build locally:
 
-**If your repository name is different:**
-1. Create a `.env` file in the root directory
-2. Set `VITE_BASE_PATH=/your-repo-name/`
-3. Rebuild: `npm run build`
-
-**To deploy:**
 ```bash
-npm run deploy
+npm run preview
 ```
 
-This will build the app and deploy it to the `gh-pages` branch.
+## Deployment
+
+### GitHub Pages Deployment
+
+The application is configured for GitHub Pages deployment. The base path is set to `/younirise-tourney/` by default.
+
+#### Prerequisites for GitHub Pages
+
+1. Ensure you have a GitHub account
+2. Push your code to a GitHub repository
+3. Install `gh-pages` (already included in devDependencies)
+
+#### Deployment Steps
+
+1. **Configure the base path** (if your repository name is different):
+   - Create a `.env` file in the root directory
+   - Add the following line:
+     ```
+     VITE_BASE_PATH=/your-repo-name/
+     ```
+   - Replace `your-repo-name` with your actual repository name
+
+2. **Deploy to GitHub Pages**:
+   ```bash
+   npm run deploy
+   ```
+
+   This command will:
+   - Build the application for production
+   - Deploy the `dist` folder to the `gh-pages` branch
+   - Push the branch to your GitHub repository
+
+3. **Enable GitHub Pages**:
+   - Go to your repository on GitHub
+   - Navigate to **Settings** → **Pages**
+   - Under **Source**, select the `gh-pages` branch
+   - Select the `/root` folder
+   - Click **Save**
+
+4. **Access your deployed application**:
+   - Your app will be available at: `https://your-username.github.io/younirise-tourney/`
+   - It may take a few minutes for the site to be live after the first deployment
+
+#### Custom Domain Setup
+
+If you want to use a custom domain:
+
+1. Update `vite.config.js` to set `base: '/'`
+2. Create a `.env` file with `VITE_BASE_PATH=/`
+3. Rebuild and redeploy
+4. Add a `CNAME` file in the `public` directory with your domain name
+
+### Alternative Deployment Options
+
+#### Netlify
+
+1. **Install Netlify CLI** (optional):
+   ```bash
+   npm install -g netlify-cli
+   ```
+
+2. **Build the application**:
+   ```bash
+   npm run build
+   ```
+
+3. **Deploy**:
+   ```bash
+   netlify deploy --prod --dir=dist
+   ```
+
+   Or connect your GitHub repository to Netlify for automatic deployments.
+
+#### Vercel
+
+1. **Install Vercel CLI**:
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Deploy**:
+   ```bash
+   vercel --prod
+   ```
+
+   Or connect your GitHub repository to Vercel for automatic deployments.
+
+#### Other Static Hosting Services
+
+Since this is a static site (after building), you can deploy to any static hosting service:
+- **AWS S3 + CloudFront**
+- **Firebase Hosting**
+- **Surge.sh**
+- **GitHub Pages** (as described above)
+
+For all static hosting services:
+1. Run `npm run build` to create the production build
+2. Upload the contents of the `dist` directory to your hosting service
 
 ## Usage
 
