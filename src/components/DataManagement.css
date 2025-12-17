@@ -53,7 +53,8 @@
 }
 
 .export-btn,
-.import-btn {
+.import-btn,
+.clear-btn {
   padding: 15px 30px;
   border: none;
   border-radius: 8px;
@@ -84,6 +85,17 @@
   background: #5568d3;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.clear-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.clear-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
 .message {
@@ -176,7 +188,8 @@
   }
 
   .export-btn,
-  .import-btn {
+  .import-btn,
+  .clear-btn {
     padding: 14px 24px;
     font-size: 1em;
   }
@@ -204,7 +217,8 @@
   }
 
   .export-btn,
-  .import-btn {
+  .import-btn,
+  .clear-btn {
     padding: 12px 20px;
     font-size: 0.95em;
   }

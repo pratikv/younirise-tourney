@@ -53,6 +53,19 @@ function DataManagement({ tournament, onImportTournament, isEditable = false }) 
     fileInputRef.current?.click();
   };
 
+  const handleClearStorage = () => {
+    try {
+      localStorage.removeItem('tournament');
+      setImportError('');
+      setImportSuccess('Saved session data cleared. Reload to refresh data.');
+      setTimeout(() => setImportSuccess(''), 3000);
+    } catch (error) {
+      setImportSuccess('');
+      setImportError(`Could not clear data: ${error.message}`);
+      setTimeout(() => setImportError(''), 5000);
+    }
+  };
+
   return (
     <div className="data-management">
       <h2>Data Management</h2>
@@ -91,6 +104,17 @@ function DataManagement({ tournament, onImportTournament, isEditable = false }) 
             </button>
           </div>
         )}
+
+        <div className="action-group">
+          <h3>Clear Saved Session Data</h3>
+          <p className="action-description">
+            Remove the locally saved tournament data from this browser. The app will reload
+            with the default dataset on next refresh.
+          </p>
+          <button onClick={handleClearStorage} className="clear-btn">
+            🧹 Clear session storage
+          </button>
+        </div>
       </div>
 
       {importError && (
