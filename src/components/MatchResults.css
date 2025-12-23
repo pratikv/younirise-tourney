@@ -79,6 +79,14 @@
   gap: 10px;
 }
 
+.match-score-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
 .match-score {
   display: flex;
   align-items: center;
@@ -86,6 +94,7 @@
   font-size: 1.2em;
   font-weight: 600;
   color: #333;
+  flex: 1;
 }
 
 .match-score .score {
@@ -94,6 +103,27 @@
 
 .match-score .separator {
   color: #6c757d;
+}
+
+.edit-btn {
+  padding: 8px 16px;
+  background: #ffc107;
+  color: #856404;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+.edit-btn:hover {
+  background: #ffb300;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .match-date {

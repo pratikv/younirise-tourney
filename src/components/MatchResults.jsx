@@ -130,10 +130,21 @@ function MatchResults({ tournament, onRecordResult, isEditable = false }) {
                     </span>
                   </div>
                   {match.completed ? (
-                    <div className="match-score">
-                      <span className="score">{match.player1Score}</span>
-                      <span className="separator">-</span>
-                      <span className="score">{match.player2Score}</span>
+                    <div className="match-score-container">
+                      <div className="match-score">
+                        <span className="score">{match.player1Score}</span>
+                        <span className="separator">-</span>
+                        <span className="score">{match.player2Score}</span>
+                      </div>
+                      {isEditable && (
+                        <button 
+                          onClick={() => handleRecordResult(match)}
+                          className="edit-btn"
+                          title="Edit match result"
+                        >
+                          ✏️ Edit
+                        </button>
+                      )}
                     </div>
                   ) : (
                     isEditable ? (
@@ -171,10 +182,21 @@ function MatchResults({ tournament, onRecordResult, isEditable = false }) {
                     </span>
                   </div>
                   {match.completed ? (
-                    <div className="match-score">
-                      <span className="score">{match.player1Score}</span>
-                      <span className="separator">-</span>
-                      <span className="score">{match.player2Score}</span>
+                    <div className="match-score-container">
+                      <div className="match-score">
+                        <span className="score">{match.player1Score}</span>
+                        <span className="separator">-</span>
+                        <span className="score">{match.player2Score}</span>
+                      </div>
+                      {isEditable && (
+                        <button 
+                          onClick={() => handleRecordResult(match)}
+                          className="edit-btn"
+                          title="Edit match result"
+                        >
+                          ✏️ Edit
+                        </button>
+                      )}
                     </div>
                   ) : (
                     isEditable ? (
@@ -198,7 +220,7 @@ function MatchResults({ tournament, onRecordResult, isEditable = false }) {
       {editingMatch && (
         <div className="modal-overlay" onClick={() => setEditingMatch(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Record Match Result</h3>
+            <h3>{editingMatch.completed ? 'Edit Match Result' : 'Record Match Result'}</h3>
             <p className="match-info">
               {getPlayerName(editingMatch.player1Id)} vs {getPlayerName(editingMatch.player2Id)}
             </p>
