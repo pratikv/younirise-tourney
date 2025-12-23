@@ -6,6 +6,7 @@ import MatchResults from './components/MatchResults';
 import Standings from './components/Standings';
 import QualificationProbabilities from './components/QualificationProbabilities';
 import DataManagement from './components/DataManagement';
+import KnockoutStage from './components/KnockoutStage';
 import preloadData from './assets/data.json';
 import './App.css';
 
@@ -150,6 +151,12 @@ function App() {
         >
           Standings
         </button>
+        <button 
+          className={activeTab === 'knockout' ? 'active' : ''}
+          onClick={() => setActiveTab('knockout')}
+        >
+          Knockout Stage
+        </button>
         {isEditable && (
           <button 
             className={activeTab === 'data' ? 'active' : ''}
@@ -178,6 +185,9 @@ function App() {
         )}
         {activeTab === 'standings' && (
           <Standings tournament={tournament} />
+        )}
+        {activeTab === 'knockout' && (
+          <KnockoutStage tournament={tournament} />
         )}
         {activeTab === 'probabilities' && (
           <QualificationProbabilities tournament={tournament} />
