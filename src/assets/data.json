@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2025-12-23T17:03:43.750Z",
+  "exportDate": "2025-12-23T17:06:17.582Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -821,10 +821,10 @@
       "player2Id": "player_1764499192007_0.7084216151822796",
       "group": "A",
       "player1Score": 8,
-      "player2Score": 1,
+      "player2Score": 2,
       "winnerId": "player_1764499184057_0.09995053385851282",
       "completed": true,
-      "playedAt": "2025-11-30T17:07:10.838Z"
+      "playedAt": "2025-12-23T17:05:52.978Z"
     },
     {
       "id": "match_1764499236295_0.030138903040022424",
@@ -1041,10 +1041,10 @@
       "player2Id": "player_1764499236294_0.8160482267168081",
       "group": "A",
       "player1Score": 8,
-      "player2Score": 1,
+      "player2Score": 0,
       "winnerId": "player_1764499231185_0.7199626587096543",
       "completed": true,
-      "playedAt": "2025-11-30T17:13:22.857Z"
+      "playedAt": "2025-12-23T17:06:12.167Z"
     },
     {
       "id": "match_1764499262380_0.727478966447435",
