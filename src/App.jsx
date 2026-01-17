@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tournament, Match } from './utils/tournament';
+import { Tournament } from './utils/tournament';
 import { deserializeTournament } from './utils/dataSerializer';
 import PlayerManagement from './components/PlayerManagement';
 import MatchResults from './components/MatchResults';
@@ -11,34 +11,29 @@ import preloadData from './assets/data.json';
 import './App.css';
 
 function App() {
+  const getIsEditable = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('editable') === 'true';
+  };
+
+  // Check if editing is enabled via URL query parameter
+  const [isEditable] = useState(getIsEditable);
+
   const [tournament, setTournament] = useState(() => {
-    // First try to load from localStorage
-    const saved = localStorage.getItem('tournament');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        const t = new Tournament();
-        // Reconstruct tournament from saved data
-        data.players.forEach(p => {
-          t.players.push(p);
-          t.groups[p.group].push(p);
-        });
-        data.matches.forEach(m => {
-          const match = new Match(m.id, m.player1Id, m.player2Id, m.group);
-          match.player1Score = m.player1Score;
-          match.player2Score = m.player2Score;
-          match.winnerId = m.winnerId;
-          match.completed = m.completed;
-          match.playedAt = m.playedAt || null; // Handle old data without playedAt
-          t.matches.push(match);
-        });
-        return t;
-      } catch (error) {
-        console.error('Error loading from localStorage:', error);
+    const editable = getIsEditable();
+    if (editable) {
+      // Only load localStorage when editing is enabled
+      const saved = localStorage.getItem('tournament');
+      if (saved) {
+        try {
+          return deserializeTournament(saved);
+        } catch (error) {
+          console.error('Error loading from localStorage:', error);
+        }
       }
     }
-    
-    // If no localStorage data, load from preload data
+
+    // If no localStorage data (or not editable), load from preload data
     try {
       return deserializeTournament(preloadData);
     } catch (error) {
@@ -48,12 +43,6 @@ function App() {
   });
 
   const [activeTab, setActiveTab] = useState('players');
-
-  // Check if editing is enabled via URL query parameter
-  const [isEditable, setIsEditable] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('editable') === 'true';
-  });
 
   // Save tournament state to localStorage (only if editable)
   useEffect(() => {
