@@ -72,6 +72,7 @@ export class Tournament {
   constructor() {
     this.players = [];
     this.matches = [];
+    this.knockoutMatches = {};
     this.groups = {
       A: [],
       B: []

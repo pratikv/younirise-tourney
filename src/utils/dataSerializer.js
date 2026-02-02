@@ -14,6 +14,7 @@ export function serializeTournament(tournament) {
       name: p.name,
       group: p.group
     })),
+    knockoutMatches: tournament.knockoutMatches || {},
     matches: tournament.matches.map(m => ({
       id: m.id,
       player1Id: m.player1Id,
@@ -59,6 +60,12 @@ export function deserializeTournament(jsonData) {
         match.playedAt = m.playedAt || null; // Handle old data without playedAt
         tournament.matches.push(match);
       });
+    }
+
+    if (data.knockoutMatches && typeof data.knockoutMatches === 'object') {
+      tournament.knockoutMatches = data.knockoutMatches;
+    } else {
+      tournament.knockoutMatches = {};
     }
     
     return tournament;

@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './KnockoutStage.css';
 
-function KnockoutStage({ tournament }) {
+function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
   const containerRef = useRef(null);
   const boxRefs = useRef({});
   const [paths, setPaths] = useState([]);
+  const [scoreInputs, setScoreInputs] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
 
   const top4A = tournament.getTop4('A');
   const top4B = tournament.getTop4('B');
@@ -20,6 +22,113 @@ function KnockoutStage({ tournament }) {
   const getPlayerName = (player) => {
     if (!player) return 'TBD';
     return player.name;
+  };
+
+  const getSavedMatch = (matchId, player1, player2) => {
+    const saved = tournament.knockoutMatches?.[matchId];
+    if (!saved || !player1 || !player2) return null;
+    if (saved.player1Id !== player1.id || saved.player2Id !== player2.id) return null;
+    return saved;
+  };
+
+  const getWinner = (saved, player1, player2) => {
+    if (!saved || !saved.completed) return null;
+    if (saved.winnerId === player1?.id) return player1;
+    if (saved.winnerId === player2?.id) return player2;
+    return null;
+  };
+
+  const qfMatches = useMemo(() => (
+    matchups.map((matchup, index) => {
+      const matchId = `qf${index + 1}`;
+      const saved = getSavedMatch(matchId, matchup.player1, matchup.player2);
+      return {
+        matchId,
+        player1: matchup.player1,
+        player2: matchup.player2,
+        saved,
+        label1: matchup.rank1,
+        label2: matchup.rank2
+      };
+    })
+  ), [matchups, tournament.knockoutMatches]);
+
+  const qfWinners = qfMatches.map(match => getWinner(match.saved, match.player1, match.player2));
+
+  const sfMatches = useMemo(() => {
+    const raw = [
+      { matchId: 'sf1', player1: qfWinners[0], player2: qfWinners[1], label1: 'Winner QF1', label2: 'Winner QF2' },
+      { matchId: 'sf2', player1: qfWinners[2], player2: qfWinners[3], label1: 'Winner QF3', label2: 'Winner QF4' }
+    ];
+    return raw.map(match => ({
+      ...match,
+      saved: getSavedMatch(match.matchId, match.player1, match.player2)
+    }));
+  }, [qfWinners, tournament.knockoutMatches]);
+
+  const sfWinners = sfMatches.map(match => getWinner(match.saved, match.player1, match.player2));
+
+  const finalMatch = useMemo(() => {
+    const match = {
+      matchId: 'final',
+      player1: sfWinners[0],
+      player2: sfWinners[1],
+      label1: 'Winner SF1',
+      label2: 'Winner SF2'
+    };
+    return { ...match, saved: getSavedMatch(match.matchId, match.player1, match.player2) };
+  }, [sfWinners, tournament.knockoutMatches]);
+
+  useEffect(() => {
+    const allMatches = [...qfMatches, ...sfMatches, finalMatch];
+    setScoreInputs(prev => {
+      const next = { ...prev };
+      allMatches.forEach(match => {
+        if (match.saved) {
+          const savedP1 = match.saved.player1Score ?? '';
+          const savedP2 = match.saved.player2Score ?? '';
+          const current = next[match.matchId];
+          if (!current || current.p1 !== savedP1 || current.p2 !== savedP2) {
+            next[match.matchId] = { p1: savedP1, p2: savedP2 };
+          }
+        } else if (!match.player1 || !match.player2) {
+          if (next[match.matchId]) {
+            delete next[match.matchId];
+          }
+        }
+      });
+      return next;
+    });
+  }, [qfMatches, sfMatches, finalMatch]);
+
+  const updateScoreInput = (matchId, side, value) => {
+    setScoreInputs(prev => ({
+      ...prev,
+      [matchId]: {
+        ...prev[matchId],
+        [side]: value
+      }
+    }));
+  };
+
+  const handleSave = (match) => {
+    if (!onUpdateKnockoutMatch) return;
+    setErrorMessage('');
+    if (!match.player1 || !match.player2) {
+      setErrorMessage('Waiting for previous round winners.');
+      return;
+    }
+    const input = scoreInputs[match.matchId] || {};
+    const error = onUpdateKnockoutMatch(
+      match.matchId,
+      match.player1.id,
+      match.player2.id,
+      input.p1 ?? '',
+      input.p2 ?? ''
+    );
+    if (error) {
+      setErrorMessage(error);
+    }
   };
 
   const boxHeight = 44;
@@ -126,6 +235,9 @@ function KnockoutStage({ tournament }) {
         </div>
       ) : (
         <div className="bracket-dom" ref={containerRef}>
+          {errorMessage && (
+            <div className="knockout-error" role="alert">{errorMessage}</div>
+          )}
           <svg className="bracket-lines" aria-hidden="true">
             {paths.map((path, index) => (
               <path key={index} d={path} />
@@ -134,70 +246,177 @@ function KnockoutStage({ tournament }) {
           <div className="round-column qf">
             <div className="round-title">Quarterfinals</div>
             <div className="round-content" style={{ height: `${totalHeight}px` }}>
-              <div className="team-box positioned" ref={setBoxRef('qf1p1')} style={{ top: `${qfMatchTops[0]}px` }}>
-                <span className="seed">A1</span>
-                <span className="team-name">{getPlayerName(matchups[0].player1)}</span>
-              </div>
-              <div className="team-box positioned" ref={setBoxRef('qf1p2')} style={{ top: `${qfMatchTops[0] + boxHeight + boxGap}px` }}>
-                <span className="seed">B4</span>
-                <span className="team-name">{getPlayerName(matchups[0].player2)}</span>
-              </div>
-
-              <div className="team-box positioned" ref={setBoxRef('qf2p1')} style={{ top: `${qfMatchTops[1]}px` }}>
-                <span className="seed">A2</span>
-                <span className="team-name">{getPlayerName(matchups[1].player1)}</span>
-              </div>
-              <div className="team-box positioned" ref={setBoxRef('qf2p2')} style={{ top: `${qfMatchTops[1] + boxHeight + boxGap}px` }}>
-                <span className="seed">B3</span>
-                <span className="team-name">{getPlayerName(matchups[1].player2)}</span>
-              </div>
-
-              <div className="team-box positioned" ref={setBoxRef('qf3p1')} style={{ top: `${qfMatchTops[2]}px` }}>
-                <span className="seed">A3</span>
-                <span className="team-name">{getPlayerName(matchups[2].player1)}</span>
-              </div>
-              <div className="team-box positioned" ref={setBoxRef('qf3p2')} style={{ top: `${qfMatchTops[2] + boxHeight + boxGap}px` }}>
-                <span className="seed">B2</span>
-                <span className="team-name">{getPlayerName(matchups[2].player2)}</span>
-              </div>
-
-              <div className="team-box positioned" ref={setBoxRef('qf4p1')} style={{ top: `${qfMatchTops[3]}px` }}>
-                <span className="seed">A4</span>
-                <span className="team-name">{getPlayerName(matchups[3].player1)}</span>
-              </div>
-              <div className="team-box positioned" ref={setBoxRef('qf4p2')} style={{ top: `${qfMatchTops[3] + boxHeight + boxGap}px` }}>
-                <span className="seed">B1</span>
-                <span className="team-name">{getPlayerName(matchups[3].player2)}</span>
-              </div>
+              {qfMatches.map((match, index) => {
+                const top = qfMatchTops[index];
+                const scores = scoreInputs[match.matchId] || {};
+                return (
+                  <div
+                    key={match.matchId}
+                    className="match positioned"
+                    style={{ top: `${top}px` }}
+                  >
+                    <div className="team-box" ref={setBoxRef(`qf${index + 1}p1`)}>
+                      <span className="seed">{match.label1}</span>
+                      <span className="team-name">{getPlayerName(match.player1)}</span>
+                      {isEditable ? (
+                        <input
+                          className="score-input"
+                          type="number"
+                          min="0"
+                          max="15"
+                          value={scores.p1 ?? ''}
+                          onChange={(event) => updateScoreInput(match.matchId, 'p1', event.target.value)}
+                        />
+                      ) : (
+                        <span className="score-display">{match.saved?.player1Score ?? '-'}</span>
+                      )}
+                    </div>
+                    <div className="team-box" ref={setBoxRef(`qf${index + 1}p2`)}>
+                      <span className="seed">{match.label2}</span>
+                      <span className="team-name">{getPlayerName(match.player2)}</span>
+                      {isEditable ? (
+                        <input
+                          className="score-input"
+                          type="number"
+                          min="0"
+                          max="15"
+                          value={scores.p2 ?? ''}
+                          onChange={(event) => updateScoreInput(match.matchId, 'p2', event.target.value)}
+                        />
+                      ) : (
+                        <span className="score-display">{match.saved?.player2Score ?? '-'}</span>
+                      )}
+                    </div>
+                    {isEditable && (
+                      <button
+                        type="button"
+                        className="match-save"
+                        onClick={() => handleSave(match)}
+                      >
+                        Save
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className="round-column sf">
             <div className="round-title">Semifinals</div>
             <div className="round-content" style={{ height: `${totalHeight}px` }}>
-              <div className="team-box positioned placeholder" ref={setBoxRef('sf1top')} style={{ top: `${sfTopBoxes[0]}px` }}>
-                <span className="team-name">Winner QF1</span>
-              </div>
-              <div className="team-box positioned placeholder" ref={setBoxRef('sf1bottom')} style={{ top: `${sfBottomBoxes[0]}px` }}>
-                <span className="team-name">Winner QF2</span>
-              </div>
-              <div className="team-box positioned placeholder" ref={setBoxRef('sf2top')} style={{ top: `${sfTopBoxes[1]}px` }}>
-                <span className="team-name">Winner QF3</span>
-              </div>
-              <div className="team-box positioned placeholder" ref={setBoxRef('sf2bottom')} style={{ top: `${sfBottomBoxes[1]}px` }}>
-                <span className="team-name">Winner QF4</span>
-              </div>
+              {sfMatches.map((match, index) => {
+                const isFirst = index === 0;
+                const topBox = isFirst ? sfTopBoxes[0] : sfTopBoxes[1];
+                const bottomBox = isFirst ? sfBottomBoxes[0] : sfBottomBoxes[1];
+                const scores = scoreInputs[match.matchId] || {};
+                return (
+                  <div
+                    key={match.matchId}
+                    className="match positioned"
+                    style={{ top: `${topBox}px` }}
+                  >
+                    <div className="team-box placeholder" ref={setBoxRef(`sf${index + 1}top`)}>
+                      <span className="team-name">{getPlayerName(match.player1) === 'TBD' ? match.label1 : getPlayerName(match.player1)}</span>
+                      {isEditable ? (
+                        <input
+                          className="score-input"
+                          type="number"
+                          min="0"
+                          max="15"
+                          value={scores.p1 ?? ''}
+                          onChange={(event) => updateScoreInput(match.matchId, 'p1', event.target.value)}
+                          disabled={!match.player1 || !match.player2}
+                        />
+                      ) : (
+                        <span className="score-display">{match.saved?.player1Score ?? '-'}</span>
+                      )}
+                    </div>
+                    <div className="team-box placeholder" ref={setBoxRef(`sf${index + 1}bottom`)} style={{ marginTop: `${bottomBox - topBox - boxHeight}px` }}>
+                      <span className="team-name">{getPlayerName(match.player2) === 'TBD' ? match.label2 : getPlayerName(match.player2)}</span>
+                      {isEditable ? (
+                        <input
+                          className="score-input"
+                          type="number"
+                          min="0"
+                          max="15"
+                          value={scores.p2 ?? ''}
+                          onChange={(event) => updateScoreInput(match.matchId, 'p2', event.target.value)}
+                          disabled={!match.player1 || !match.player2}
+                        />
+                      ) : (
+                        <span className="score-display">{match.saved?.player2Score ?? '-'}</span>
+                      )}
+                    </div>
+                    {isEditable && (
+                      <button
+                        type="button"
+                        className="match-save"
+                        onClick={() => handleSave(match)}
+                        disabled={!match.player1 || !match.player2}
+                      >
+                        Save
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className="round-column final">
             <div className="round-title">Final</div>
             <div className="round-content" style={{ height: `${totalHeight}px` }}>
-              <div className="team-box positioned placeholder" ref={setBoxRef('finaltop')} style={{ top: `${finalTopBoxes[0]}px` }}>
-                <span className="team-name">Winner SF1</span>
-              </div>
-              <div className="team-box positioned placeholder" ref={setBoxRef('finalbottom')} style={{ top: `${finalBottomBoxes[0]}px` }}>
-                <span className="team-name">Winner SF2</span>
+              <div
+                className="match positioned"
+                style={{ top: `${finalTopBoxes[0]}px` }}
+              >
+                <div className="team-box placeholder" ref={setBoxRef('finaltop')}>
+                  <span className="team-name">{getPlayerName(finalMatch.player1) === 'TBD' ? finalMatch.label1 : getPlayerName(finalMatch.player1)}</span>
+                  {isEditable ? (
+                    <input
+                      className="score-input"
+                      type="number"
+                      min="0"
+                      max="15"
+                      value={(scoreInputs[finalMatch.matchId] || {}).p1 ?? ''}
+                      onChange={(event) => updateScoreInput(finalMatch.matchId, 'p1', event.target.value)}
+                      disabled={!finalMatch.player1 || !finalMatch.player2}
+                    />
+                  ) : (
+                    <span className="score-display">{finalMatch.saved?.player1Score ?? '-'}</span>
+                  )}
+                </div>
+                <div
+                  className="team-box placeholder"
+                  ref={setBoxRef('finalbottom')}
+                  style={{ marginTop: `${finalBottomBoxes[0] - finalTopBoxes[0] - boxHeight}px` }}
+                >
+                  <span className="team-name">{getPlayerName(finalMatch.player2) === 'TBD' ? finalMatch.label2 : getPlayerName(finalMatch.player2)}</span>
+                  {isEditable ? (
+                    <input
+                      className="score-input"
+                      type="number"
+                      min="0"
+                      max="15"
+                      value={(scoreInputs[finalMatch.matchId] || {}).p2 ?? ''}
+                      onChange={(event) => updateScoreInput(finalMatch.matchId, 'p2', event.target.value)}
+                      disabled={!finalMatch.player1 || !finalMatch.player2}
+                    />
+                  ) : (
+                    <span className="score-display">{finalMatch.saved?.player2Score ?? '-'}</span>
+                  )}
+                </div>
+                {isEditable && (
+                  <button
+                    type="button"
+                    className="match-save"
+                    onClick={() => handleSave(finalMatch)}
+                    disabled={!finalMatch.player1 || !finalMatch.player2}
+                  >
+                    Save
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -206,7 +425,9 @@ function KnockoutStage({ tournament }) {
             <div className="round-title">Champion</div>
             <div className="round-content" style={{ height: `${totalHeight}px` }}>
               <div className="team-box positioned champion" ref={setBoxRef('champ')} style={{ top: `${champTop}px` }}>
-                <span className="team-name">Winner Final</span>
+                <span className="team-name">{finalMatch.saved?.winnerId ? getPlayerName(
+                  finalMatch.saved.winnerId === finalMatch.player1?.id ? finalMatch.player1 : finalMatch.player2
+                ) : 'Winner Final'}</span>
               </div>
               <div className="trophy positioned" style={{ top: `${champTop + boxHeight + 10}px` }}>🏆</div>
             </div>

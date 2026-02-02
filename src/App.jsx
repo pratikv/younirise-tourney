@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Tournament } from './utils/tournament';
-import { deserializeTournament } from './utils/dataSerializer';
+import { Tournament, Match } from './utils/tournament';
+import { deserializeTournament, serializeTournament } from './utils/dataSerializer';
 import PlayerManagement from './components/PlayerManagement';
 import MatchResults from './components/MatchResults';
 import Standings from './components/Standings';
@@ -47,20 +47,7 @@ function App() {
   // Save tournament state to localStorage (only if editable)
   useEffect(() => {
     if (!isEditable) return; // Don't save if not editable
-    const data = {
-      players: tournament.players,
-      matches: tournament.matches.map(m => ({
-        id: m.id,
-        player1Id: m.player1Id,
-        player2Id: m.player2Id,
-        group: m.group,
-        player1Score: m.player1Score,
-        player2Score: m.player2Score,
-        winnerId: m.winnerId,
-        completed: m.completed,
-        playedAt: m.playedAt
-      }))
-    };
+    const data = serializeTournament(tournament);
     localStorage.setItem('tournament', JSON.stringify(data));
   }, [tournament, isEditable]);
 
@@ -73,6 +60,7 @@ function App() {
       A: [...tournament.groups.A],
       B: [...tournament.groups.B]
     };
+    newTournament.knockoutMatches = { ...tournament.knockoutMatches };
     newTournament.addPlayer(name, group);
     setTournament(newTournament);
   };
@@ -86,6 +74,7 @@ function App() {
       A: [...tournament.groups.A],
       B: [...tournament.groups.B]
     };
+    newTournament.knockoutMatches = { ...tournament.knockoutMatches };
     newTournament.removePlayer(playerId);
     setTournament(newTournament);
   };
@@ -106,7 +95,45 @@ function App() {
       A: [...tournament.groups.A],
       B: [...tournament.groups.B]
     };
+    newTournament.knockoutMatches = { ...tournament.knockoutMatches };
     setTournament(newTournament);
+  };
+
+  const updateKnockoutMatch = (matchId, player1Id, player2Id, player1Score, player2Score) => {
+    if (!isEditable) return 'Editing is disabled.';
+    const newTournament = new Tournament();
+    newTournament.players = [...tournament.players];
+    newTournament.matches = [...tournament.matches];
+    newTournament.groups = {
+      A: [...tournament.groups.A],
+      B: [...tournament.groups.B]
+    };
+    newTournament.knockoutMatches = { ...tournament.knockoutMatches };
+
+    if (player1Score === '' || player2Score === '' || player1Score === null || player2Score === null) {
+      delete newTournament.knockoutMatches[matchId];
+      setTournament(newTournament);
+      return null;
+    }
+
+    try {
+      const match = new Match(matchId, player1Id, player2Id, 'KO');
+      match.recordResult(Number(player1Score), Number(player2Score));
+      newTournament.knockoutMatches[matchId] = {
+        id: matchId,
+        player1Id,
+        player2Id,
+        player1Score: match.player1Score,
+        player2Score: match.player2Score,
+        winnerId: match.winnerId,
+        completed: match.completed,
+        playedAt: match.playedAt
+      };
+      setTournament(newTournament);
+      return null;
+    } catch (error) {
+      return error.message;
+    }
   };
 
   const handleImportTournament = (importedTournament) => {
@@ -176,7 +203,11 @@ function App() {
           <Standings tournament={tournament} />
         )}
         {activeTab === 'knockout' && (
-          <KnockoutStage tournament={tournament} />
+          <KnockoutStage
+            tournament={tournament}
+            isEditable={isEditable}
+            onUpdateKnockoutMatch={updateKnockoutMatch}
+          />
         )}
         {activeTab === 'probabilities' && (
           <QualificationProbabilities tournament={tournament} />
