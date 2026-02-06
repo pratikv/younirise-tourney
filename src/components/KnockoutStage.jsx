@@ -11,11 +11,11 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
   const top4A = tournament.getTop4('A');
   const top4B = tournament.getTop4('B');
 
-  // Create matchups: A1 vs B4, A2 vs B3, A3 vs B2, A4 vs B1
+  // Create matchups: A1 vs B4, A3 vs B2, A2 vs B3, A4 vs B1
   const matchups = [
     { id: 1, player1: top4A[0], player2: top4B[3], rank1: 'A1', rank2: 'B4' },
-    { id: 2, player1: top4A[1], player2: top4B[2], rank1: 'A2', rank2: 'B3' },
-    { id: 3, player1: top4A[2], player2: top4B[1], rank1: 'A3', rank2: 'B2' },
+    { id: 2, player1: top4A[2], player2: top4B[1], rank1: 'A3', rank2: 'B2' },
+    { id: 3, player1: top4A[1], player2: top4B[2], rank1: 'A2', rank2: 'B3' },
     { id: 4, player1: top4A[3], player2: top4B[0], rank1: 'A4', rank2: 'B1' },
   ];
 
