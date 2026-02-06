@@ -12,12 +12,12 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
   const top4B = tournament.getTop4('B');
 
   // Create matchups: A1 vs B4, A3 vs B2, A2 vs B3, A4 vs B1
-  const matchups = [
+  const matchups = useMemo(() => ([
     { id: 1, player1: top4A[0], player2: top4B[3], rank1: 'A1', rank2: 'B4' },
     { id: 2, player1: top4A[2], player2: top4B[1], rank1: 'A3', rank2: 'B2' },
     { id: 3, player1: top4A[1], player2: top4B[2], rank1: 'A2', rank2: 'B3' },
     { id: 4, player1: top4A[3], player2: top4B[0], rank1: 'A4', rank2: 'B1' },
-  ];
+  ]), [top4A, top4B]);
 
   const getPlayerName = (player) => {
     if (!player) return 'TBD';
@@ -83,6 +83,7 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
     const allMatches = [...qfMatches, ...sfMatches, finalMatch];
     setScoreInputs(prev => {
       const next = { ...prev };
+      let changed = false;
       allMatches.forEach(match => {
         if (match.saved) {
           const savedP1 = match.saved.player1Score ?? '';
@@ -90,14 +91,16 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
           const current = next[match.matchId];
           if (!current || current.p1 !== savedP1 || current.p2 !== savedP2) {
             next[match.matchId] = { p1: savedP1, p2: savedP2 };
+            changed = true;
           }
         } else if (!match.player1 || !match.player2) {
           if (next[match.matchId]) {
             delete next[match.matchId];
+            changed = true;
           }
         }
       });
-      return next;
+      return changed ? next : prev;
     });
   }, [qfMatches, sfMatches, finalMatch]);
 
