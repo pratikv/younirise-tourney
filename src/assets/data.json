@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-02T11:15:16.953Z",
+  "exportDate": "2026-02-06T05:44:47.363Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -88,6 +88,7 @@
       "group": "B"
     }
   ],
+  "knockoutMatches": {},
   "matches": [
     {
       "id": "match_1764499184057_0.5886745933490914",
@@ -787,11 +788,11 @@
       "player1Id": "player_1764499175866_0.906502876411716",
       "player2Id": "player_1764499223597_0.8595106205277674",
       "group": "A",
-      "player1Score": null,
-      "player2Score": null,
-      "winnerId": null,
-      "completed": false,
-      "playedAt": null
+      "player1Score": 8,
+      "player2Score": 2,
+      "winnerId": "player_1764499175866_0.906502876411716",
+      "completed": true,
+      "playedAt": "2026-02-06T05:42:13.307Z"
     },
     {
       "id": "match_1764499236295_0.2048005257250154",
@@ -919,11 +920,11 @@
       "player1Id": "player_1764499192007_0.7084216151822796",
       "player2Id": "player_1764499231185_0.7199626587096543",
       "group": "A",
-      "player1Score": null,
-      "player2Score": null,
-      "winnerId": null,
-      "completed": false,
-      "playedAt": null
+      "player1Score": 8,
+      "player2Score": 7,
+      "winnerId": "player_1764499192007_0.7084216151822796",
+      "completed": true,
+      "playedAt": "2026-02-06T05:44:42.623Z"
     },
     {
       "id": "match_1764499236295_0.6898016619277187",
@@ -2030,11 +2031,11 @@
       "player1Id": "player_1764499251774_0.1557320923403721",
       "player2Id": "player_1764499295951_0.9412711138899857",
       "group": "B",
-      "player1Score": null,
-      "player2Score": null,
-      "winnerId": null,
-      "completed": false,
-      "playedAt": null
+      "player1Score": 6,
+      "player2Score": 8,
+      "winnerId": "player_1764499295951_0.9412711138899857",
+      "completed": true,
+      "playedAt": "2026-02-06T05:41:28.767Z"
     },
     {
       "id": "match_1764499303876_0.41100089383553995",
