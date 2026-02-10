@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-06T05:44:47.363Z",
+  "exportDate": "2026-02-10T17:08:02.043Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -88,7 +88,18 @@
       "group": "B"
     }
   ],
-  "knockoutMatches": {},
+  "knockoutMatches": {
+    "qf4": {
+      "id": "qf4",
+      "player1Id": "player_1764499223597_0.8595106205277674",
+      "player2Id": "player_1764499295951_0.9412711138899857",
+      "player1Score": 7,
+      "player2Score": 9,
+      "winnerId": "player_1764499295951_0.9412711138899857",
+      "completed": true,
+      "playedAt": "2026-02-10T17:07:54.726Z"
+    }
+  },
   "matches": [
     {
       "id": "match_1764499184057_0.5886745933490914",
