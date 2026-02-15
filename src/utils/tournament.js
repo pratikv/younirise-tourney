@@ -31,6 +31,9 @@ export class Match {
     const maxScore = Math.max(player1Score, player2Score);
     const minScore = Math.min(player1Score, player2Score);
     
+    if(player1Score === 1 && player2Score === 1){
+      // Allow this as dummy score
+    }else {
     // At 7-7, tie break is played and winner gets 8-7
     if (player1Score === 7 && player2Score === 7) {
       throw new Error("At 7-7, a tie break must be played. Enter 8-7 for the winner.");
@@ -59,6 +62,7 @@ export class Match {
     } else {
       throw new Error("Invalid score. Maximum is 15 games");
     }
+  }
 
     this.player1Score = player1Score;
     this.player2Score = player2Score;

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-14T13:49:35.196Z",
+  "exportDate": "2026-02-15T16:41:05.052Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -108,6 +108,16 @@
       "winnerId": "player_1764499184057_0.09995053385851282",
       "completed": true,
       "playedAt": "2026-02-14T13:49:26.929Z"
+    },
+    "qf1": {
+      "id": "qf1",
+      "player1Id": "player_1764499175866_0.906502876411716",
+      "player2Id": "player_1764499251774_0.1557320923403721",
+      "player1Score": 9,
+      "player2Score": 4,
+      "winnerId": "player_1764499175866_0.906502876411716",
+      "completed": true,
+      "playedAt": "2026-02-15T16:40:59.502Z"
     }
   },
   "matches": [
@@ -985,22 +995,22 @@
       "player1Id": "player_1764499208495_0.6225339942386491",
       "player2Id": "player_1764499231185_0.7199626587096543",
       "group": "A",
-      "player1Score": null,
-      "player2Score": null,
-      "winnerId": null,
-      "completed": false,
-      "playedAt": null
+      "player1Score": 1,
+      "player2Score": 1,
+      "winnerId": "player_1764499231185_0.7199626587096543",
+      "completed": true,
+      "playedAt": "2026-02-15T16:39:51.211Z"
     },
     {
       "id": "match_1764499236295_0.34602908251294096",
       "player1Id": "player_1764499208495_0.6225339942386491",
       "player2Id": "player_1764499236294_0.8160482267168081",
       "group": "A",
-      "player1Score": null,
-      "player2Score": null,
-      "winnerId": null,
-      "completed": false,
-      "playedAt": null
+      "player1Score": 1,
+      "player2Score": 1,
+      "winnerId": "player_1764499236294_0.8160482267168081",
+      "completed": true,
+      "playedAt": "2026-02-15T16:39:58.140Z"
     },
     {
       "id": "match_1764499236295_0.3898111067322787",
