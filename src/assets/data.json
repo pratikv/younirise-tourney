@@ -997,7 +997,7 @@
       "group": "A",
       "player1Score": 1,
       "player2Score": 1,
-      "winnerId": "player_1764499231185_0.7199626587096543",
+      "winnerId": null,
       "completed": true,
       "playedAt": "2026-02-15T16:39:51.211Z"
     },
@@ -1008,7 +1008,7 @@
       "group": "A",
       "player1Score": 1,
       "player2Score": 1,
-      "winnerId": "player_1764499236294_0.8160482267168081",
+      "winnerId": null,
       "completed": true,
       "playedAt": "2026-02-15T16:39:58.140Z"
     },

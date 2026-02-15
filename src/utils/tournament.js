@@ -66,7 +66,7 @@ export class Match {
 
     this.player1Score = player1Score;
     this.player2Score = player2Score;
-    this.winnerId = player1Score > player2Score ? this.player1Id : this.player2Id;
+    this.winnerId = player1Score === 1 && player2Score === 1 ? null : player1Score > player2Score ? this.player1Id : this.player2Id;
     this.completed = true;
     this.playedAt = new Date().toISOString(); // Store current date and time
   }
