@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-21T13:57:42.166Z",
+  "exportDate": "2026-02-22T16:54:31.016Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -128,6 +128,26 @@
       "winnerId": "player_1764499192007_0.7084216151822796",
       "completed": true,
       "playedAt": "2026-02-21T13:56:01.900Z"
+    },
+    "sf1": {
+      "id": "sf1",
+      "player1Id": "player_1764499175866_0.906502876411716",
+      "player2Id": "player_1764499192007_0.7084216151822796",
+      "player1Score": 9,
+      "player2Score": 4,
+      "winnerId": "player_1764499175866_0.906502876411716",
+      "completed": true,
+      "playedAt": "2026-02-22T16:54:19.045Z"
+    },
+    "sf2": {
+      "id": "sf2",
+      "player1Id": "player_1764499184057_0.09995053385851282",
+      "player2Id": "player_1764499295951_0.9412711138899857",
+      "player1Score": 10,
+      "player2Score": 5,
+      "winnerId": "player_1764499184057_0.09995053385851282",
+      "completed": true,
+      "playedAt": "2026-02-22T16:54:25.893Z"
     }
   },
   "matches": [
