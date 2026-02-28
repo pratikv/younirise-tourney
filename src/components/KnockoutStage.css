@@ -169,6 +169,17 @@
   font-size: 0.9em;
 }
 
+.set-inputs {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.set-inputs .score-input {
+  width: 36px;
+  margin-left: 0;
+}
+
 .score-display {
   margin-left: auto;
   font-weight: 600;

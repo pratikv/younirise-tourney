@@ -6,6 +6,9 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
   const boxRefs = useRef({});
   const [paths, setPaths] = useState([]);
   const [scoreInputs, setScoreInputs] = useState({});
+  const [finalSetInputs, setFinalSetInputs] = useState({
+    final: { s1p1: '', s1p2: '', s2p1: '', s2p2: '', s3p1: '', s3p2: '' }
+  });
   const [errorMessage, setErrorMessage] = useState('');
 
   const top4A = tournament.getTop4('A');
@@ -104,6 +107,22 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
     });
   }, [qfMatches, sfMatches, finalMatch]);
 
+  useEffect(() => {
+    const saved = finalMatch.saved;
+    if (saved?.sets && Array.isArray(saved.sets)) {
+      setFinalSetInputs({
+        final: {
+          s1p1: saved.sets[0]?.player1Score ?? '',
+          s1p2: saved.sets[0]?.player2Score ?? '',
+          s2p1: saved.sets[1]?.player1Score ?? '',
+          s2p2: saved.sets[1]?.player2Score ?? '',
+          s3p1: saved.sets[2]?.player1Score ?? '',
+          s3p2: saved.sets[2]?.player2Score ?? ''
+        }
+      });
+    }
+  }, [finalMatch]);
+
   const updateScoreInput = (matchId, side, value) => {
     setScoreInputs(prev => ({
       ...prev,
@@ -119,6 +138,27 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
     setErrorMessage('');
     if (!match.player1 || !match.player2) {
       setErrorMessage('Waiting for previous round winners.');
+      return;
+    }
+    if (match.matchId === 'final') {
+      const inputs = finalSetInputs.final;
+      const error = onUpdateKnockoutMatch(
+        match.matchId,
+        match.player1.id,
+        match.player2.id,
+        '',
+        '',
+        {
+          sets: [
+            { p1: inputs.s1p1, p2: inputs.s1p2 },
+            { p1: inputs.s2p1, p2: inputs.s2p2 },
+            { p1: inputs.s3p1, p2: inputs.s3p2 }
+          ]
+        }
+      );
+      if (error) {
+        setErrorMessage(error);
+      }
       return;
     }
     const input = scoreInputs[match.matchId] || {};
@@ -157,6 +197,16 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
     if (element) {
       boxRefs.current[key] = element;
     }
+  };
+
+  const updateFinalSetInput = (field, value) => {
+    setFinalSetInputs(prev => ({
+      ...prev,
+      final: {
+        ...prev.final,
+        [field]: value
+      }
+    }));
   };
 
   useEffect(() => {
@@ -377,17 +427,39 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
                 <div className="team-box placeholder" ref={setBoxRef('finaltop')}>
                   <span className="team-name">{getPlayerName(finalMatch.player1) === 'TBD' ? finalMatch.label1 : getPlayerName(finalMatch.player1)}</span>
                   {isEditable ? (
-                    <input
-                      className="score-input"
-                      type="number"
-                      min="0"
-                      max="15"
-                      value={(scoreInputs[finalMatch.matchId] || {}).p1 ?? ''}
-                      onChange={(event) => updateScoreInput(finalMatch.matchId, 'p1', event.target.value)}
-                      disabled={!finalMatch.player1 || !finalMatch.player2}
-                    />
+                    <div className="set-inputs">
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="7"
+                        value={finalSetInputs.final.s1p1}
+                        onChange={(event) => updateFinalSetInput('s1p1', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="7"
+                        value={finalSetInputs.final.s2p1}
+                        onChange={(event) => updateFinalSetInput('s2p1', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={finalSetInputs.final.s3p1}
+                        onChange={(event) => updateFinalSetInput('s3p1', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                    </div>
                   ) : (
-                    <span className="score-display">{finalMatch.saved?.player1Score ?? '-'}</span>
+                    <span className="score-display">
+                      {(finalMatch.saved?.sets || []).map(set => `${set.player1Score}-${set.player2Score}`).join(', ') || '-'}
+                    </span>
                   )}
                 </div>
                 <div
@@ -397,17 +469,39 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
                 >
                   <span className="team-name">{getPlayerName(finalMatch.player2) === 'TBD' ? finalMatch.label2 : getPlayerName(finalMatch.player2)}</span>
                   {isEditable ? (
-                    <input
-                      className="score-input"
-                      type="number"
-                      min="0"
-                      max="15"
-                      value={(scoreInputs[finalMatch.matchId] || {}).p2 ?? ''}
-                      onChange={(event) => updateScoreInput(finalMatch.matchId, 'p2', event.target.value)}
-                      disabled={!finalMatch.player1 || !finalMatch.player2}
-                    />
+                    <div className="set-inputs">
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="7"
+                        value={finalSetInputs.final.s1p2}
+                        onChange={(event) => updateFinalSetInput('s1p2', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="7"
+                        value={finalSetInputs.final.s2p2}
+                        onChange={(event) => updateFinalSetInput('s2p2', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                      <input
+                        className="score-input"
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={finalSetInputs.final.s3p2}
+                        onChange={(event) => updateFinalSetInput('s3p2', event.target.value)}
+                        disabled={!finalMatch.player1 || !finalMatch.player2}
+                      />
+                    </div>
                   ) : (
-                    <span className="score-display">{finalMatch.saved?.player2Score ?? '-'}</span>
+                    <span className="score-display">
+                      {(finalMatch.saved?.sets || []).map(set => `${set.player1Score}-${set.player2Score}`).join(', ') || '-'}
+                    </span>
                   )}
                 </div>
                 {isEditable && (

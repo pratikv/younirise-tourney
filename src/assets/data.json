@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-22T16:54:31.016Z",
+  "exportDate": "2026-02-28T06:21:03.538Z",
   "players": [
     {
       "id": "player_1764499175866_0.906502876411716",
@@ -148,6 +148,30 @@
       "winnerId": "player_1764499184057_0.09995053385851282",
       "completed": true,
       "playedAt": "2026-02-22T16:54:25.893Z"
+    },
+    "final": {
+      "id": "final",
+      "player1Id": "player_1764499175866_0.906502876411716",
+      "player2Id": "player_1764499184057_0.09995053385851282",
+      "player1Score": 1,
+      "player2Score": 2,
+      "winnerId": "player_1764499184057_0.09995053385851282",
+      "completed": true,
+      "playedAt": "2026-02-28T06:20:57.058Z",
+      "sets": [
+        {
+          "player1Score": 7,
+          "player2Score": 6
+        },
+        {
+          "player1Score": 4,
+          "player2Score": 6
+        },
+        {
+          "player1Score": 5,
+          "player2Score": 10
+        }
+      ]
     }
   },
   "matches": [

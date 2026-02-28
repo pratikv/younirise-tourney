@@ -99,7 +99,7 @@ function App() {
     setTournament(newTournament);
   };
 
-  const updateKnockoutMatch = (matchId, player1Id, player2Id, player1Score, player2Score) => {
+  const updateKnockoutMatch = (matchId, player1Id, player2Id, player1Score, player2Score, options = {}) => {
     if (!isEditable) return 'Editing is disabled.';
     const newTournament = new Tournament();
     newTournament.players = [...tournament.players];
@@ -109,6 +109,80 @@ function App() {
       B: [...tournament.groups.B]
     };
     newTournament.knockoutMatches = { ...tournament.knockoutMatches };
+
+    if (options.sets) {
+      const allEmpty = options.sets.every(set => set.p1 === '' && set.p2 === '');
+      if (allEmpty) {
+        delete newTournament.knockoutMatches[matchId];
+        setTournament(newTournament);
+        return null;
+      }
+      const parseScore = (value) => {
+        if (value === '' || value === null || value === undefined) return null;
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? null : parsed;
+      };
+      const sets = options.sets.map(set => ({
+        p1: parseScore(set.p1),
+        p2: parseScore(set.p2)
+      }));
+      const validateRegularSet = (p1, p2) => {
+        if (p1 === null || p2 === null) return 'Both scores required for set.';
+        if (p1 < 0 || p2 < 0) return 'Set scores cannot be negative.';
+        if (p1 === 6 && p2 <= 4) return null;
+        if (p2 === 6 && p1 <= 4) return null;
+        if (p1 === 7 && (p2 === 5 || p2 === 6)) return null;
+        if (p2 === 7 && (p1 === 5 || p1 === 6)) return null;
+        return 'Invalid set score. Use regular tennis set rules.';
+      };
+      const validateSuperTiebreak = (p1, p2) => {
+        if (p1 === null || p2 === null) return 'Both scores required for super tie break.';
+        if (p1 < 0 || p2 < 0) return 'Super tie break scores cannot be negative.';
+        const maxScore = Math.max(p1, p2);
+        const minScore = Math.min(p1, p2);
+        if (maxScore < 10) return 'Super tie break winner must reach 10.';
+        if (maxScore - minScore < 2) return 'Super tie break must be won by 2.';
+        return null;
+      };
+
+      const set1Error = validateRegularSet(sets[0]?.p1, sets[0]?.p2);
+      if (set1Error) return set1Error;
+      const set2Error = validateRegularSet(sets[1]?.p1, sets[1]?.p2);
+      if (set2Error) return set2Error;
+
+      let p1Sets = 0;
+      let p2Sets = 0;
+      if (sets[0].p1 > sets[0].p2) p1Sets += 1;
+      else p2Sets += 1;
+      if (sets[1].p1 > sets[1].p2) p1Sets += 1;
+      else p2Sets += 1;
+
+      let set3Provided = sets[2] && sets[2].p1 !== null && sets[2].p2 !== null;
+      if (p1Sets === 1 && p2Sets === 1) {
+        if (!set3Provided) return 'Third set super tie break is required.';
+        const set3Error = validateSuperTiebreak(sets[2].p1, sets[2].p2);
+        if (set3Error) return set3Error;
+        if (sets[2].p1 > sets[2].p2) p1Sets += 1;
+        else p2Sets += 1;
+      } else if (set3Provided) {
+        return 'Third set should be empty when match is decided in two sets.';
+      }
+
+      const winnerId = p1Sets > p2Sets ? player1Id : player2Id;
+      newTournament.knockoutMatches[matchId] = {
+        id: matchId,
+        player1Id,
+        player2Id,
+        player1Score: p1Sets,
+        player2Score: p2Sets,
+        winnerId,
+        completed: true,
+        playedAt: new Date().toISOString(),
+        sets: sets.map(set => ({ player1Score: set.p1, player2Score: set.p2 }))
+      };
+      setTournament(newTournament);
+      return null;
+    }
 
     if (player1Score === '' || player2Score === '' || player1Score === null || player2Score === null) {
       delete newTournament.knockoutMatches[matchId];
