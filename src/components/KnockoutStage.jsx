@@ -41,6 +41,17 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
     return null;
   };
 
+  const formatFinalSets = (saved, flip = false) => {
+    if (!saved?.sets || !Array.isArray(saved.sets) || saved.sets.length === 0) return '-';
+    return saved.sets
+      .map(set => {
+        const p1 = set.player1Score ?? '-';
+        const p2 = set.player2Score ?? '-';
+        return flip ? `${p2}-${p1}` : `${p1}-${p2}`;
+      })
+      .join(', ');
+  };
+
   const qfMatches = useMemo(() => (
     matchups.map((matchup, index) => {
       const matchId = `qf${index + 1}`;
@@ -457,9 +468,7 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
                       />
                     </div>
                   ) : (
-                    <span className="score-display">
-                      {(finalMatch.saved?.sets || []).map(set => `${set.player1Score}-${set.player2Score}`).join(', ') || '-'}
-                    </span>
+                    <span className="score-display">{formatFinalSets(finalMatch.saved, false)}</span>
                   )}
                 </div>
                 <div
@@ -499,9 +508,7 @@ function KnockoutStage({ tournament, isEditable, onUpdateKnockoutMatch }) {
                       />
                     </div>
                   ) : (
-                    <span className="score-display">
-                      {(finalMatch.saved?.sets || []).map(set => `${set.player1Score}-${set.player2Score}`).join(', ') || '-'}
-                    </span>
+                    <span className="score-display">{formatFinalSets(finalMatch.saved, true)}</span>
                   )}
                 </div>
                 {isEditable && (
